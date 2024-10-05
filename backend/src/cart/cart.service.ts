@@ -3,26 +3,33 @@ import {
   CART_EMPTY,
   DISCOUNT_INVALID,
   ITEM_ADDEDD,
+  ITEM_COST,
   ORDER_PLACED,
 } from '../constants';
 import { ChekoutDto, OrderDto } from 'src/dto';
 import { ICartItem } from 'src/interfaces';
-import { store } from 'src/store';
+import { Cardsdata, store } from 'src/store';
 
 @Injectable()
 export class CartService {
-  addToCart(body: OrderDto) {
-    const { userId, productId, quantity } = body;
+  private prices: {} = {};
 
-    if (!userId || !productId || !quantity) {
-      throw new BadRequestException();
-    }
+  constructor() {
+    Cardsdata.forEach((product) => {
+      this.prices[product.id] = product.price;
+    });
+  }
+
+  addToCart(body: OrderDto) {
+    const { userId, items } = body;
 
     if (!store.cartData[userId]) {
       store.cartData[userId] = [];
     }
 
-    store.cartData[userId].push({ productId, quantity });
+    items.forEach(({ productId, quantity }) => {
+      store.cartData[userId].push({ productId, quantity });
+    });
 
     return { message: ITEM_ADDEDD, cart: store.cartData[userId] };
   }
@@ -76,8 +83,13 @@ export class CartService {
 
   calculateTotal = (cart: ICartItem[]): number => {
     return cart.reduce(
-      (total: number, item: ICartItem) => total + item.quantity * 100, // Assuming each product costs 100
+      (total: number, item: ICartItem) =>
+        total + this.prices[item.productId] * item.quantity,
       0,
     );
+  };
+
+  getItems = () => {
+    return Cardsdata;
   };
 }
