@@ -52,7 +52,7 @@ const CartDetails = () => {
 
       const payload = { userId, items };
       await confirmOrder(payload);
-      toast.success("Order Confirmed");
+      toast.success("Order Initiated");
       setEnableDiscount(true);
       dispatch(setLoader(false));
     } catch (error) {
