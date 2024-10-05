@@ -24,6 +24,13 @@ const Headers = () => {
               </span>
             </div>
           </NavLink>
+          <NavLink to="/admin" className="text-decoration-none text-light mx-2">
+            <div id="ex4">
+              <span className="p1 fa-stack fa-2x">
+                <i className="fa-solid fa-user"></i>
+              </span>
+            </div>
+          </NavLink>
         </Container>
       </Navbar>
     </>
